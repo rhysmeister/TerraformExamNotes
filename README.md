@@ -36,6 +36,18 @@ The notes here are a condensed version of the official Exam Review section linke
     * [Terraform Sytle Conventions](https://www.terraform.io/language/syntax/style)
     * [Terraform fmt Video](https://www.youtube.com/watch?v=aPZ6a9QtgJw)
     * `terraform fmt --diff` - show what would be changed, without actually doing it.
+  * 4b `terraform taint` - informs Terraform that a particular object has become degraded or damaged. Terraform represents this by marking the object as "tainted" in the Terraform state, and Terraform will propose to replace it in the next plan you create.
+    * This command is deprecated. For Terraform v0.15.2 and later, use the -replace option with terraform apply instead.
+    * Example cmd: `terraform taint aws_bucket.mybucket`
+    * `terraform apply -replace="aws_instance.example[0]"`
+    * [Taint and Untaint Resources](https://www.youtube.com/watch?v=ySGc_obU6wY)
+  * 4c `terraform import` - Used to import existing resources into Terraform.
+    * This command can be used to bring resources, that have been created outside of terraform, into management via Terraform.
+    * Example cmd: `terraform import aws_instance.foo i-abcd1234`
+    * [terraform import](https://www.youtube.com/watch?v=nvskcI-XPrY)
+  * 4d `terraform workspace` - 
+  * 4e `terraform state` - 
+  * 4f Verbose logging 
 * 5 - Interact with Terraform modules
 * 6 - Navigate Terraform workflow
 * 7 - Implement and maintain state

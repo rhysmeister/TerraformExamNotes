@@ -14,6 +14,8 @@ The notes here are a condensed version of the official Exam Review section linke
 * 1 - Understand Infrastructure as Code (IaC) concepts
   * 1a - Explain What IaC is.
     * Infrastructure as code (IaC) is the process of managing and provisioning computer data centres through machine-readable definition files, rather than physical hardware configuration or interactive configuration tools.
+    * [https://en.wikipedia.org/wiki/Infrastructure_as_code](https://en.wikipedia.org/wiki/Infrastructure_as_code)
+    * [What is Infrastructure As Code?](https://odysee.com/@thecloudcoach:5/what-is-infrastructure-as-code-terraform:5)
   * 1b - Describe advantages of IaC patterns
     * Cost reduction - by removing the manual component, people can focus their efforts on other tasks, meaning costs are reduced.
     * Speed - Automation allows us to work faster, for example when a system is defined as code, we can recreate it when needed without all the manual work we used to do.
@@ -30,6 +32,10 @@ The notes here are a condensed version of the official Exam Review section linke
     * [Further Reading](https://medium.com/@mitesh_shamra/state-management-with-terraform-9f13497e54cf)
 * 3 - Understand Terraform basics
 * 4 - Use the Terraform CLI (outside of core workflow)
+  * 4a `terraform fmt` - command is used to rewrite Terraform configuration files to a canonical format and style. This command applies a subset of the Terraform language style conventions, along with other minor adjustments for readability.
+    * [Terraform Sytle Conventions](https://www.terraform.io/language/syntax/style)
+    * [Terraform fmt Video](https://www.youtube.com/watch?v=aPZ6a9QtgJw)
+    * `terraform fmt --diff` - show what would be changed, without actually doing it.
 * 5 - Interact with Terraform modules
 * 6 - Navigate Terraform workflow
 * 7 - Implement and maintain state

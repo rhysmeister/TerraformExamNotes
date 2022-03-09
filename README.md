@@ -13,15 +13,15 @@ The notes here are a condensed version of the official Exam Review section linke
 
 * 1 - Understand Infrastructure as Code (IaC) concepts
   * 1a - Explain What IaC is.
-> Infrastructure as code (IaC) is the process of managing and provisioning computer data centres through machine-readable definition files, rather than physical hardware configuration or interactive configuration tools.
+    * Infrastructure as code (IaC) is the process of managing and provisioning computer data centres through machine-readable definition files, rather than physical hardware configuration or interactive configuration tools.
   * 1b - Describe advantages of IaC patterns
-> Cost reduction - by removing the manual component, people can focus their efforts on other tasks, meaning costs are reduced.
-> Speed - Automation allows us to work faster, for example when a system is defined as code, we can recreate it when needed without all the manual work we used to do.
->Risk - IaC removes the risk associated with human error, like manual misconfiguration, we reduce the chance of downtime and increase reliability.
+    * Cost reduction - by removing the manual component, people can focus their efforts on other tasks, meaning costs are reduced.
+    * Speed - Automation allows us to work faster, for example when a system is defined as code, we can recreate it when needed without all the manual work we used to do.
+    * Risk - IaC removes the risk associated with human error, like manual misconfiguration, we reduce the chance of downtime and increase reliability.
 * 2 - Understand Terraform's purpose (vs other IaC)
   * 2a - Explain multi-cloud and provider agnostic benefits
-> Spread infrastructure across multiple cloud providers to increase fault tolerance.
-> Terraform is able to handle multiple cloud providers so you do not have to learn and deploy multiple tools to support this.
+    * Spread infrastructure across multiple cloud providers to increase fault tolerance.
+    * Terraform is able to handle multiple cloud providers so you do not have to learn and deploy multiple tools to support this.
   * 2b - Explain the benefits of state
     * Real world mapping of resources.
     * Track metadata of resources such as IP address of EC2 instance, its dependency with respect to other resources etc.

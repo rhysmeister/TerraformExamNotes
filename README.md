@@ -45,7 +45,27 @@ The notes here are a condensed version of the official Exam Review section linke
     * This command can be used to bring resources, that have been created outside of terraform, into management via Terraform.
     * Example cmd: `terraform import aws_instance.foo i-abcd1234`
     * [terraform import](https://www.youtube.com/watch?v=nvskcI-XPrY)
-  * 4d `terraform workspace` - 
+  * 4d `terraform workspace` - Can be used to store multiple environment states in a single backend. For example they can be used to implement dev, test, staging and prod environments using a single codebase.
+    * [Terraform Workspaces](https://www.terraform.io/language/state/workspaces)
+    * Example cmd: `terraform workspace new dev` - creates a new worspace called dev.
+    * Example cmd: `terraform workspace select dev` - sets the current worksapce to dev.
+    * We can reference the workspace in Terraform code with `${terraform.workspace}`.
+    * Example code:
+```terraform
+resource "aws_instance" "example" {
+  count = "${terraform.workspace == "default" ? 5 : 1}"
+
+  # ... other arguments
+}
+
+resource "aws_instance" "example" {
+  tags = {
+    Name = "web - ${terraform.workspace}"
+  }
+
+  # ... other arguments
+}
+```
   * 4e `terraform state` - 
   * 4f Verbose logging 
 * 5 - Interact with Terraform modules

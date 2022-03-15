@@ -409,6 +409,21 @@ terraform {
 }
 ```
     * It is recommended to not provide credentials in the backend configuration. These should be provided by secrets files or shell environment variables.
+    * If no backend block is configured Terraform defaults to a local backend. This is fine for single-developer development use/training but anything more advanced should use a secure remote backend.
+    * It is possible to migrate the state between backends.
+    * Terraform state backups are recommended.
+    * Partial Configuration
+      * When some or all of the arguments are omitted, we call this a partial configuration.
+      * With a partial configuration, the remaining configuration arguments must be provided as part of the initialization process.
+      * There are several ways to provide the remaining arguments:
+        * File - `terraform init -backend-config=PATH`
+        * Command-line key/value pairs - `terraform init -backend-config="KEY=VALUE"`
+        * Interactively - Terraform will prompt for required parameters only.
+```terraform
+terraform {
+  backend "consul" {}
+}
+```
   * 7g Understand secret management in state files
     * [Sensitive Data in State](https://www.terraform.io/language/state/sensitive-data)
     * Terraform state files should be treated as sensitive data.

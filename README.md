@@ -6,6 +6,7 @@ Notes for the Terraform Associate Certification
 * [Study Guide](https://learn.hashicorp.com/tutorials/terraform/associate-study)
 * [Sample Questions](https://learn.hashicorp.com/tutorials/terraform/associate-questions?in=terraform/certification)
 * [Exam Review](https://learn.hashicorp.com/tutorials/terraform/associate-review?in=terraform/certification)
+* [Terraform Associate Tutorials](https://learn.hashicorp.com/collections/terraform/certification-associate-tutorials)
 
 # Review Guide
 
@@ -256,7 +257,173 @@ resource "aws_instance" "example" {
       * `terraform destroy` is an alias for `terraform apply -destroy`.
       * `terraform plan -destroy` - shows you the proposed destroy changes without executing them.
       * [AWS Destroy Example](https://learn.hashicorp.com/tutorials/terraform/aws-destroy)
-
 * 7 - Implement and maintain state
+  * 7a Describe default local backend
+    * Backends define where Terraform's state snapshots are stored.
+    * A given Terraform configuration can either specify a backend, integrate with Terraform Cloud, or do neither and default to storing state locally.
+    * Terraform uses this persisted state data to keep track of the resources it manages.
+    * By default, Terraform implicitly uses a backend called local to store state as a local file on disk.
+    * [Terraform Backends](https://www.terraform.io/language/settings/backends)
+    * [Local Backend configuration](https://www.terraform.io/language/settings/backends/local)
+```terraform
+terraform {
+  backend "local" {
+    path = "relative/path/to/terraform.tfstate"
+  }
+}
+```
+    * Data Source Configuration
+```terraform
+data "terraform_remote_state" "foo" {
+  backend = "local"
+
+  config = {
+    path = "${path.module}/../../terraform.tfstate"
+  }
+}
+```
+  * 7b Outline state locking
+    * [State Locking](https://www.terraform.io/language/state/locking)
+      * If supported by your backend, Terraform will lock your state for all operations that could write state.
+      * This prevents others from acquiring the lock and potentially corrupting your state.
+      * If state locking fails, Terraform will not continue.
+      * You can disable state locking for most commands with the `-lock` flag but it is not recommended.
+      * Terraform has a `terraform force-unlock LOCK_ID` command to manually unlock state. Emergency use only, use with care!
+      * [Force Unlock](https://www.terraform.io/cli/commands/force-unlock)
+      * [Managing Terraform State Files](https://odysee.com/@thecloudcoach:5/managing-terraform-state-files-what-are:9)
+  * 7c Handle backend authentication methods
+    * [Backend Types](https://www.terraform.io/language/settings/backends)
+      * local
+      * remote
+      * artifactory
+        * [Artifactory Backend](https://www.terraform.io/language/settings/backends/artifactory)
+        * Stores the state as an artifact in a given repository in Artifactory.
+        * Generic HTTP repositories are supported, and state from different configurations may be kept at different subpaths within the repository.
+        * This backend does not support state locking.
+  ```terraform
+  terraform {
+  backend "artifactory" {
+    username = "SheldonCooper"
+    password = "AmyFarrahFowler"
+    url      = "https://custom.artifactoryonline.com/artifactory"
+    repo     = "foo"
+    subpath  = "terraform-bar"
+  }
+}
+```
+```terraform
+data "terraform_remote_state" "foo" {
+  backend = "artifactory"
+  config = {
+    username = "SheldonCooper"
+    password = "AmyFarrahFowler"
+    url      = "https://custom.artifactoryonline.com/artifactory"
+    repo     = "foo"
+    subpath  = "terraform-bar"
+  }
+}
+```
+      * azurerm
+      * consul
+      * cos
+      * etcd
+      * etcdv3
+      * gcs
+      * http
+        * [HTTP Backend](https://www.terraform.io/language/settings/backends/http)
+```terraform
+terraform {
+  backend "http" {
+    address = "http://myrest.api.com/foo"
+    lock_address = "http://myrest.api.com/foo"
+    unlock_address = "http://myrest.api.com/foo"
+    username = user
+    password = secret
+  }
+}
+```
+```terraform
+data "terraform_remote_state" "foo" {
+  backend = "http"
+  config = {
+    address = "http://my.rest.api.com"
+    username = user
+    password = secret
+  }
+}
+```
+      * Kubernetes
+      * manta
+      * oss
+      * pg
+      * s3
+        * [S3 Backend](https://www.terraform.io/language/settings/backends/s3)
+        * Stores the state as a given key in a given bucket on Amazon S3.
+        * This backend also supports state locking and consistency checking via Dynamo DB.
+```terraform
+terraform {
+  backend "s3" {
+    bucket = "mybucket"
+    key    = "path/to/my/key"
+    region = "us-east-1"
+    access_key = "XXXXXXXXXXXXXXXXX"
+    secret_key = "XXXXXXXXXXXXXXXXX"
+  }
+}
+```
+      * swift
+    * The built-in backends are the only backends. You cannot load additional backends as plugins.
+  * 7d Describe remote state storage mechanisms and supported standard backends
+    * Writes the state data to a remote data store, which can then be shared between all members of a team.
+    * Supported Backends
+      * Terraform Cloud
+      * HashiCorp Consul
+      * Amazon S3
+      * Azure Blob Storage
+      * Google Cloud Storage
+      * Alibaba Cloud OSS
+      * [More](https://www.terraform.io/language/settings/backends)
+    * [Remote State](https://www.terraform.io/language/state/remote)
+    * [Remote State Storage](https://learn.hashicorp.com/tutorials/terraform/aws-remote)
+    * [Remote State and Backends](https://www.youtube.com/watch?v=RBW253A4SvY)
+  * 7e 	Describe effect of Terraform refresh on state
+    * `terraform refresh`reads the current settings from all managed remote objects and updates the Terraform state to match.
+    * This won't modify your real remote objects, but it will modify the Terraform state.
+    * A refresh is also performed when you do wither a `terraform plan` or `terraform apply`.
+    * It's recommended not to use the `terraform refresh` command. [Read more](https://www.terraform.io/cli/commands/refresh)
+    * [Manage Resource Drift](https://learn.hashicorp.com/tutorials/terraform/resource-drift)
+    * [terraform plan --refresh-only](https://learn.hashicorp.com/tutorials/terraform/refresh)
+  * 7f Describe backend block in configuration and best practices for partial configurations
+    * A configuration can only provide one backend block.
+    * A backend block cannot refer to named values (like input variables, locals, or data source attributes).
+    * Backends are configured with a nested backend block within the top-level terraform block:
+```terraform
+terraform {
+  backend "remote" {
+    organization = "example_corp"
+
+    workspaces {
+      name = "my-app-prod"
+    }
+  }
+}
+```
+    * It is recommended to not provide credentials in the backend configuration. These should be provided by secrets files or shell environment variables.
+  * 7g Understand secret management in state files
+    * [Sensitive Data in State](https://www.terraform.io/language/state/sensitive-data)
+    * Terraform state files should be treated as sensitive data.
+    * Use remote state that securely stores files, i.e. encryption at rest.
+    * From Terraform 0.9 remote state is not persisted to disk and is only ever stored in memory.
+    * Terraform Cloud
+      * Encrypts at rest.
+      * TLS in transit.
+      * Identifies users.
+      * State history.
+      * Detailed auditing.
+    * Amazon S3
+      * Encryption option.
+      * IAM Policies and logging for security and auditing.
+      * Requests are TLS encrypted.
 * 8 - Read, generate, and modify configuration
 * 9 - Understand Terraform Cloud and Enterprise capabilities
+  * [Migrate State to Terraform Cloud](https://learn.hashicorp.com/tutorials/terraform/cloud-migrate#set-up-the-remote-backend)

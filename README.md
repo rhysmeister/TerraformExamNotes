@@ -153,9 +153,25 @@ provider "registry.terraform.io/hashicorp/random" {
     * The `terraform init --upgrade` command will upgrade all providers to the latest version consistent within the version constraints previously established in your configuration.
 
   * 3b Describe plug-in based architecture
+    * Terraform is comprised of Terraform Core and Terraform Plugins
+    * Terraform Core reads the configuration and builds the resource dependency graph.
+    * Terraform Plugins (providers and provisioners) bridge Terraform Core and their respective target APIs. 
+    * Terraform provider plugins implement resources via basic CRUD (create, read, update, and delete) APIs to communicate with third party services.
+    * [Terraform Plugins](https://learn.hashicorp.com/tutorials/terraform/provider-use)
   * 3c Demonstrate using multiple providers
+    * [Lock and Upgrade Provider Versions](https://learn.hashicorp.com/tutorials/terraform/provider-versioning)
+    * [Using Multiple Providers](https://robertdebock.nl/learn-terraform/ADVANCED/multiple-resources.html)
+    * [How to use multiple AWS providers in a Terraform project](https://medium.com/scalereal/how-to-use-multiple-aws-providers-in-a-terraform-project-672da074c3eb)
+    * [Terraform Multi-Provider Deployment Including a Custom Provider](https://blog.codecentric.de/en/2018/08/terraform-multi-provider-deployment-including-a-custom-provider/)
   * 3d Describe how Terraform finds and fetches providers
+    * [Providers](https://www.terraform.io/language/providers/configuration)
   * 3e Explain when to use and not use provisioners and when to use local-exec or remote-exec
+    * [Provisioners are a Last Resort](https://www.terraform.io/language/resources/provisioners/syntax#provisioners-are-a-last-resort)
+    * File Provisioner - Copy files to the created resources.
+    * local-exec - Invokes a local executable after the resource is created. This invokes a process on the machine running Terraform, not on the resource.
+    * remote-exec -  invokes a script on a remote resource after it is created. This can be used to run a configuration management tool, bootstrap into a cluster, etc.
+    * Provisioner blocks have a `self` object that can be used to refer to properties of the resource, i.e. `self.public_ip`.
+    * Provisioners can also be used on destroy by using `when = destroy` in the provisioner block.
 * 4 - Use the Terraform CLI (outside of core workflow)
   * 4a `terraform fmt` - command is used to rewrite Terraform configuration files to a canonical format and style. This command applies a subset of the Terraform language style conventions, along with other minor adjustments for readability.
     * [Terraform Sytle Conventions](https://www.terraform.io/language/syntax/style)
@@ -443,25 +459,49 @@ terraform {
       * Requests are TLS encrypted.
 * 8 - Read, generate, and modify configuration
 * 9 - Understand Terraform Cloud and Enterprise capabilities
-  * Sentinel
-    * Policy as Code.
-    * embedded policy-as-code framework integrated with the HashiCorp Enterprise products.
-    * enables fine-grained, logic-based policy decisions, and can be extended to use information from external sources.
-    * [Getting Started with Sentinel](https://docs.hashicorp.com/sentinel/intro/getting-started)
-    * [Writing Sentinel Policy](https://docs.hashicorp.com/sentinel/writing)
-    * [Sentinel Language Rules](https://docs.hashicorp.com/sentinel/language/rules)
-    * [Introduction to Sentinel](https://www.youtube.com/watch?v=Vy8s7AAvU6g)
-  * Module Registry
-    * Helps you share Terraform providers and modules.
-    * Support for versioning.
-    * [Use Modules from the Registry](https://learn.hashicorp.com/tutorials/terraform/module-use#use-the-terraform-registry)
-  * Terraform Cloud Workspaces
-    * A Worpsace in Terraform Cloud is different to a local workspace.
-    * [Using terraform.workspace with Terraform Cloud](https://medium.com/@lichnguyen/using-terraform-workspace-with-terraform-cloud-993c31c1f8bc)
-    * A Workspace consists of:
-      * A Terraform configuration
-      * Variables and their values
-      * Stored state
-      * Historical state and run logs
-    * [Terraform Workspaces](https://www.terraform.io/cloud-docs/workspaces)
-    * [Terraform Enterprise: Understanding Workspaces and Modules](https://www.youtube.com/watch?v=qfQrsaFnsmU)
+  * 9a Describe the benefits of Sentinel, registry, and workspaces
+    * Sentinel
+      * Policy as Code.
+      * embedded policy-as-code framework integrated with the HashiCorp Enterprise products.
+      * enables fine-grained, logic-based policy decisions, and can be extended to use information from external sources.
+      * [Getting Started with Sentinel](https://docs.hashicorp.com/sentinel/intro/getting-started)
+      * [Writing Sentinel Policy](https://docs.hashicorp.com/sentinel/writing)
+      * [Sentinel Language Rules](https://docs.hashicorp.com/sentinel/language/rules)
+      * [Introduction to Sentinel](https://www.youtube.com/watch?v=Vy8s7AAvU6g)
+    * Module Registry
+      * Helps you share Terraform providers and modules.
+      * Support for versioning.
+      * [Use Modules from the Registry](https://learn.hashicorp.com/tutorials/terraform/module-use#use-the-terraform-registry)
+    * Terraform Cloud Workspaces
+      * A Worpsace in Terraform Cloud is different to a local workspace.
+      * [Using terraform.workspace with Terraform Cloud](https://medium.com/@lichnguyen/using-terraform-workspace-with-terraform-cloud-993c31c1f8bc)
+      * A Workspace consists of:
+        * A Terraform configuration
+        * Variables and their values
+        * Stored state
+        * Historical state and run logs
+      * [Terraform Workspaces](https://www.terraform.io/cloud-docs/workspaces)
+      * [Terraform Enterprise: Understanding Workspaces and Modules](https://www.youtube.com/watch?v=qfQrsaFnsmU)
+  * 9b Differentiate OSS and Terraform Cloud workspaces
+    * [CLI Workspaces](https://www.terraform.io/docs/language/state/workspaces.html)
+    * [Enterprise/Cloud Workspaces](https://www.terraform.io/docs/cloud/workspaces/index.html)
+  * 9c Summarize features of Terraform Cloud
+    * [Overview of Terraform Cloud](https://www.terraform.io/cloud-docs/overview)
+      * Terraform Workflow - Shared environment designed for teams.
+      * Remote Terraform Execution - Deploy via disposable Virtual Machines.
+      * Workspaces - contains everything necessary to manage a given collection of infrastructure, and Terraform uses that content whenever it executes in the context of that workspace.
+      * Remote State Management
+      * Data Sharing - share state with other teams-
+      * Triggers - ensure downstreams worpsaces react when something changes. [Run Triggers](https://www.terraform.io/cloud-docs/workspaces/settings/run-triggers)
+      * Version Control Integration.
+      * CLI Integration.
+      * Private Registry.
+      * Full API.
+      * Notifcations - For example to Slack.
+      * Tasks (Sep 2021 Beta feature).
+      * Access Control / Governance / Team Permissions.
+      * Sentinel Policies.
+      * Cost Estimation - HOw much extra will this change cost me in AWS/Azure, GCP etc.
+
+
+

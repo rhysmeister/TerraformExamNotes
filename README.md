@@ -7,6 +7,7 @@ Notes for the Terraform Associate Certification
 * [Sample Questions](https://learn.hashicorp.com/tutorials/terraform/associate-questions?in=terraform/certification)
 * [Exam Review](https://learn.hashicorp.com/tutorials/terraform/associate-review?in=terraform/certification)
 * [Terraform Associate Tutorials](https://learn.hashicorp.com/collections/terraform/certification-associate-tutorials)
+* [HashiCorp Terraform Associate Certification Course](https://www.youtube.com/watch?v=V4waklkBC38)
 
 # Review Guide
 
@@ -208,7 +209,7 @@ resource "aws_instance" "example" {
       * Encapsulate configuration.
       * Re-use configuration.
       * Provide consistency and ensure best practices.
-    * [FInd and using modules](https://www.terraform.io/registry/modules/use)
+    * [Find and using modules](https://www.terraform.io/registry/modules/use)
     * [Terraform Registry](https://registry.terraform.io/)
 * 6 - Navigate Terraform workflow
   * 6a Describe Terraform workflow ( Write -> Plan -> Create )
@@ -386,6 +387,7 @@ terraform {
     * [Remote State](https://www.terraform.io/language/state/remote)
     * [Remote State Storage](https://learn.hashicorp.com/tutorials/terraform/aws-remote)
     * [Remote State and Backends](https://www.youtube.com/watch?v=RBW253A4SvY)
+    * [Migrate State to Terraform Cloud](https://learn.hashicorp.com/tutorials/terraform/cloud-migrate#set-up-the-remote-backend)
   * 7e 	Describe effect of Terraform refresh on state
     * `terraform refresh`reads the current settings from all managed remote objects and updates the Terraform state to match.
     * This won't modify your real remote objects, but it will modify the Terraform state.
@@ -441,4 +443,25 @@ terraform {
       * Requests are TLS encrypted.
 * 8 - Read, generate, and modify configuration
 * 9 - Understand Terraform Cloud and Enterprise capabilities
-  * [Migrate State to Terraform Cloud](https://learn.hashicorp.com/tutorials/terraform/cloud-migrate#set-up-the-remote-backend)
+  * Sentinel
+    * Policy as Code.
+    * embedded policy-as-code framework integrated with the HashiCorp Enterprise products.
+    * enables fine-grained, logic-based policy decisions, and can be extended to use information from external sources.
+    * [Getting Started with Sentinel](https://docs.hashicorp.com/sentinel/intro/getting-started)
+    * [Writing Sentinel Policy](https://docs.hashicorp.com/sentinel/writing)
+    * [Sentinel Language Rules](https://docs.hashicorp.com/sentinel/language/rules)
+    * [Introduction to Sentinel](https://www.youtube.com/watch?v=Vy8s7AAvU6g)
+  * Module Registry
+    * Helps you share Terraform providers and modules.
+    * Support for versioning.
+    * [Use Modules from the Registry](https://learn.hashicorp.com/tutorials/terraform/module-use#use-the-terraform-registry)
+  * Terraform Cloud Workspaces
+    * A Worpsace in Terraform Cloud is different to a local workspace.
+    * [Using terraform.workspace with Terraform Cloud](https://medium.com/@lichnguyen/using-terraform-workspace-with-terraform-cloud-993c31c1f8bc)
+    * A Workspace consists of:
+      * A Terraform configuration
+      * Variables and their values
+      * Stored state
+      * Historical state and run logs
+    * [Terraform Workspaces](https://www.terraform.io/cloud-docs/workspaces)
+    * [Terraform Enterprise: Understanding Workspaces and Modules](https://www.youtube.com/watch?v=qfQrsaFnsmU)

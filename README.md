@@ -45,6 +45,7 @@ The notes here are a condensed version of the official Exam Review section linke
     * Providers allow Terraform to interact with cloud providers, SaaS providers, and other APIs.
     * [Terraform Provider Registry](https://registry.terraform.io/browse/providers)
     * A provider configuration is created in the root module using a `provider`block.
+
 ```terraform
 provider "google" {
   project = "acme-app"
@@ -64,12 +65,14 @@ provider "aws" {
   region = "us-west-2"
 }
 ```
+
     * The `terraform`configuration block is used to configure some behaviors of Terraform itself, such as requiring a minimum Terraform version to apply your configuration.
       * Each terraform block can contain a number of settings related to Terraform's behavior. 
       * Within a terraform block, only constant values can be used; arguments may not refer to named objects such as resources, input variables, etc
       * Can not use any of the Terraform language built-in functions.
       * The `terraform` block can contain the following keywords:
         * `cloud` - Integrate with [Terraform Cloud](https://www.terraform.io/language/settings/terraform-cloud)
+
 ```terraform
 terraform {
   cloud {
@@ -81,8 +84,10 @@ terraform {
   }
 }
 ````
+
         * `backend` - Configure a backend where state snapshots are stored. Cannot be used if the configuration also contains a `cloud` block.
         * [Terraform Backend](https://www.terraform.io/language/settings/backends/configuration)
+
 ```terraform
 terraform {
   backend "s3" {
@@ -91,9 +96,11 @@ terraform {
     region = "us-east-1"
   }
 }
-```      
+```
+
         * `required_version` - setting accepts a [version constraint](https://www.terraform.io/language/expressions/version-constraints) string, which specifies which versions of Terraform can be used with your configuration.
         * `required_providers` - block specifies all of the providers required by the current module, mapping each local provider name to a source address and a version constraint.
+
 ```terraform
 terraform {
   required_providers {
@@ -108,13 +115,17 @@ terraform {
   required_version = "~> 0.12.29"
 }
 ```
+
         * `experiments` - Enable experimental features in Terraform.
+
 ```terraform
 terraform {
   experiments = [example]
 }
 ```
+
         * `provider_meta` - This allows the provider to receive module-specific information, and is primarily intended for modules distributed by the same vendor as the associated provider.
+
 ```terraform
 terraform {
   provider_meta "my-provider" {
@@ -122,10 +133,12 @@ terraform {
   }
 }
 ```
+
     * [Provider Versioning](https://learn.hashicorp.com/tutorials/terraform/provider-versioning)
       * terraform.lock.hcl
         * Created when you run `terraform init` for the first time.
         * Should be included in git to ensure other users of the code use the same provider versions.
+
 ```terraform
 # This file is maintained automatically by "terraform init".
 # Manual edits may be lost in future updates.
@@ -150,6 +163,7 @@ provider "registry.terraform.io/hashicorp/random" {
   ]
 }
 ```
+
     * The `terraform init --upgrade` command will upgrade all providers to the latest version consistent within the version constraints previously established in your configuration.
 
   * 3b Describe plug-in based architecture
@@ -192,6 +206,7 @@ provider "registry.terraform.io/hashicorp/random" {
     * Example cmd: `terraform workspace select dev` - sets the current worksapce to dev.
     * We can reference the workspace in Terraform code with `${terraform.workspace}`.
     * Example code:
+
 ```terraform
 resource "aws_instance" "example" {
   count = "${terraform.workspace == "default" ? 5 : 1}"
@@ -207,6 +222,7 @@ resource "aws_instance" "example" {
   # ... other arguments
 }
 ```
+
   * 4e `terraform state` - 
   * 4f Verbose logging
     * Can be enabled by setting the `TF_LOG` envronment variable to any value.
@@ -282,6 +298,7 @@ resource "aws_instance" "example" {
     * By default, Terraform implicitly uses a backend called local to store state as a local file on disk.
     * [Terraform Backends](https://www.terraform.io/language/settings/backends)
     * [Local Backend configuration](https://www.terraform.io/language/settings/backends/local)
+
 ```terraform
 terraform {
   backend "local" {
@@ -289,7 +306,9 @@ terraform {
   }
 }
 ```
+
     * Data Source Configuration
+
 ```terraform
 data "terraform_remote_state" "foo" {
   backend = "local"
@@ -299,6 +318,7 @@ data "terraform_remote_state" "foo" {
   }
 }
 ```
+
   * 7b Outline state locking
     * [State Locking](https://www.terraform.io/language/state/locking)
       * If supported by your backend, Terraform will lock your state for all operations that could write state.
@@ -317,7 +337,8 @@ data "terraform_remote_state" "foo" {
         * Stores the state as an artifact in a given repository in Artifactory.
         * Generic HTTP repositories are supported, and state from different configurations may be kept at different subpaths within the repository.
         * This backend does not support state locking.
-  ```terraform
+
+```terraform
   terraform {
   backend "artifactory" {
     username = "SheldonCooper"
@@ -328,6 +349,7 @@ data "terraform_remote_state" "foo" {
   }
 }
 ```
+
 ```terraform
 data "terraform_remote_state" "foo" {
   backend = "artifactory"
@@ -340,6 +362,7 @@ data "terraform_remote_state" "foo" {
   }
 }
 ```
+
       * azurerm
       * consul
       * cos
@@ -348,6 +371,7 @@ data "terraform_remote_state" "foo" {
       * gcs
       * http
         * [HTTP Backend](https://www.terraform.io/language/settings/backends/http)
+
 ```terraform
 terraform {
   backend "http" {
@@ -359,6 +383,7 @@ terraform {
   }
 }
 ```
+
 ```terraform
 data "terraform_remote_state" "foo" {
   backend = "http"
@@ -369,6 +394,7 @@ data "terraform_remote_state" "foo" {
   }
 }
 ```
+
       * Kubernetes
       * manta
       * oss
@@ -377,6 +403,7 @@ data "terraform_remote_state" "foo" {
         * [S3 Backend](https://www.terraform.io/language/settings/backends/s3)
         * Stores the state as a given key in a given bucket on Amazon S3.
         * This backend also supports state locking and consistency checking via Dynamo DB.
+
 ```terraform
 terraform {
   backend "s3" {
@@ -388,6 +415,7 @@ terraform {
   }
 }
 ```
+
       * swift
     * The built-in backends are the only backends. You cannot load additional backends as plugins.
   * 7d Describe remote state storage mechanisms and supported standard backends
@@ -415,6 +443,7 @@ terraform {
     * A configuration can only provide one backend block.
     * A backend block cannot refer to named values (like input variables, locals, or data source attributes).
     * Backends are configured with a nested backend block within the top-level terraform block:
+
 ```terraform
 terraform {
   backend "remote" {
@@ -426,6 +455,7 @@ terraform {
   }
 }
 ```
+
     * It is recommended to not provide credentials in the backend configuration. These should be provided by secrets files or shell environment variables.
     * If no backend block is configured Terraform defaults to a local backend. This is fine for single-developer development use/training but anything more advanced should use a secure remote backend.
     * It is possible to migrate the state between backends.
@@ -437,11 +467,13 @@ terraform {
         * File - `terraform init -backend-config=PATH`
         * Command-line key/value pairs - `terraform init -backend-config="KEY=VALUE"`
         * Interactively - Terraform will prompt for required parameters only.
+
 ```terraform
 terraform {
   backend "consul" {}
 }
 ```
+
   * 7g Understand secret management in state files
     * [Sensitive Data in State](https://www.terraform.io/language/state/sensitive-data)
     * Terraform state files should be treated as sensitive data.
@@ -465,12 +497,14 @@ terraform {
       * Facilitates module sharing and reuse.
       * For root modules, variables can be set on the cmd line or environment variables.
       * For child modules, the calling module should pass the values in the module block.
+
 ```terraform
 variable "image_id" {
   type = string
   default= "myimageid"
 }
 ```
+
       * The follow optional arguments are availabkle when declaring variables:
         * `default` - A default value which then makes the variable optional.
         * `type` - This argument specifies what value types are accepted for the variable.
@@ -484,10 +518,12 @@ variable "image_id" {
         * In variable definitions (.tfvars) files, either specified on the command line or automatically loaded. `terraform apply -var-file="testing.tfvars"`
         * As environment variables.
           * As a fallback for the other ways of defining variables, Terraform searches the environment of its own process for environment variables named TF_VAR_ followed by the name of a declared variable.
+
 ```terraform
 export TF_VAR_image_id=ami-abc123
 terraform plan
 ```
+
     * [Output Data from Terraform](https://learn.hashicorp.com/tutorials/terraform/outputs)
     * [Output Values](https://www.terraform.io/language/values/outputs)
       * Output values make information about your infrastructure available on the command line.
@@ -497,25 +533,30 @@ terraform plan
       * A root module can use outputs to print certain values in the CLI output after running `terraform apply`.
       * When using remote state, root module outputs can be accessed by other configurations via a terraform_remote_state data source.
       * Each output value must be declared using an output block:
+
 ```terraform
 output "instance_ip_addr" {
   value = aws_instance.server.private_ip
 }
 ```
+
       * Outputs are only rendered when Terraform applies your plan. Running terraform plan will not render outputs.
       * In a parent module, outputs of child modules are available in expressions as module.<MODULE NAME>.<OUTPUT NAME>. For example, if a child module named web_server declared an output named instance_ip_addr, you could access that value as module.web_server.instance_ip_addr.
       * Output blocks can optionally include:
         * `description` - DOcumentation for the output.
         * `sensitive` - Protect sensitive information.
-  ```terraform
+
+```terraform
   output "db_password" {
   value       = aws_db_instance.db.password
   description = "The password for logging in to the database."
   sensitive   = true
 }
 ```
+
         * `depends_on` - Use when there is a dependency on a another resource.
-  ```terraform
+
+```terraform
   output "instance_ip_addr" {
   value       = aws_instance.server.private_ip
   description = "The private IP address of the main server instance."
@@ -526,7 +567,8 @@ output "instance_ip_addr" {
     aws_security_group_rule.local_access,
   ]
 }
-  ``` 
+```
+
   * 8b - Describe secure secret injection best practice
     * [Vault Provider for Terraform](https://registry.terraform.io/providers/hashicorp/vault/latest/docs)
       * The Vault provider allows Terraform to read from, write to, and configure HashiCorp Vault.
@@ -590,5 +632,3 @@ output "instance_ip_addr" {
   * Typically put into providers.tf.
 * Null resources - Resources that have no specific association with a provider.
 * GoLang produces a file called *crash.log* in the event of a panic/crash.
-
-

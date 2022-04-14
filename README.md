@@ -458,6 +458,79 @@ terraform {
       * IAM Policies and logging for security and auditing.
       * Requests are TLS encrypted.
 * 8 - Read, generate, and modify configuration
+  * 8a - Demonstrate use of variables and outputs
+    * [Customize Terraform Configuration with Variables](https://learn.hashicorp.com/tutorials/terraform/variables)
+    * [Input Variables](https://www.terraform.io/language/values/variables)
+      * let you customize aspects of Terraform modules without altering the module's own source code.
+      * Facilitates module sharing and reuse.
+      * For root modules, variables can be set on the cmd line or environment variables.
+      * For child modules, the calling module should pass the values in the module block.
+```terraform
+variable "image_id" {
+  type = string
+  default= "myimageid"
+}
+```
+      * The follow optional arguments are availabkle when declaring variables:
+        * `default` - A default value which then makes the variable optional.
+        * `type` - This argument specifies what value types are accepted for the variable.
+        * `description` - This specifies the input variable's documentation.
+        * `validation` - A block to define validation rules, usually in addition to type constraints.
+        * `sensitive` - Limits Terraform UI output when the variable is used in configuration.
+        * `nullable` - Specify if the variable can be null within the module.
+      * Assigning values to root module variables:
+        * In a Terraform Cloud Workspace.
+        * Individually, with the -var command line option. `terraform apply -var="image_id=ami-abc123"`
+        * In variable definitions (.tfvars) files, either specified on the command line or automatically loaded. `terraform apply -var-file="testing.tfvars"`
+        * As environment variables.
+          * As a fallback for the other ways of defining variables, Terraform searches the environment of its own process for environment variables named TF_VAR_ followed by the name of a declared variable.
+```terraform
+export TF_VAR_image_id=ami-abc123
+terraform plan
+```
+    * [Output Data from Terraform](https://learn.hashicorp.com/tutorials/terraform/outputs)
+    * [Output Values](https://www.terraform.io/language/values/outputs)
+      * Output values make information about your infrastructure available on the command line.
+      * Can expose information for other Terraform configurations to use. 
+      * Output values are similar to return values in programming languages.
+      * A child module can use outputs to expose a subset of its resource attributes to a parent module.
+      * A root module can use outputs to print certain values in the CLI output after running `terraform apply`.
+      * When using remote state, root module outputs can be accessed by other configurations via a terraform_remote_state data source.
+      * Each output value must be declared using an output block:
+```terraform
+output "instance_ip_addr" {
+  value = aws_instance.server.private_ip
+}
+```
+      * Outputs are only rendered when Terraform applies your plan. Running terraform plan will not render outputs.
+      * In a parent module, outputs of child modules are available in expressions as module.<MODULE NAME>.<OUTPUT NAME>. For example, if a child module named web_server declared an output named instance_ip_addr, you could access that value as module.web_server.instance_ip_addr.
+      * Output blocks can optionally include:
+        * `description` - DOcumentation for the output.
+        * `sensitive` - Protect sensitive information.
+  ```terraform
+  output "db_password" {
+  value       = aws_db_instance.db.password
+  description = "The password for logging in to the database."
+  sensitive   = true
+}
+```
+        * `depends_on` - Use when there is a dependency on a another resource.
+  ```terraform
+  output "instance_ip_addr" {
+  value       = aws_instance.server.private_ip
+  description = "The private IP address of the main server instance."
+
+  depends_on = [
+    # Security group rule must be created before this IP address could
+    # actually be used, otherwise the services will be unreachable.
+    aws_security_group_rule.local_access,
+  ]
+}
+  ``` 
+  * 8b - Describe secure secret injection best practice
+    * [Vault Provider for Terraform](https://registry.terraform.io/providers/hashicorp/vault/latest/docs)
+      * The Vault provider allows Terraform to read from, write to, and configure HashiCorp Vault.
+    * [Inject Secrets into Terraform Using the Vault Provider](https://learn.hashicorp.com/tutorials/terraform/secrets-vault)
 * 9 - Understand Terraform Cloud and Enterprise capabilities
   * 9a Describe the benefits of Sentinel, registry, and workspaces
     * Sentinel
@@ -503,5 +576,19 @@ terraform {
       * Sentinel Policies.
       * Cost Estimation - HOw much extra will this change cost me in AWS/Azure, GCP etc.
 
+# Exam Trivia
+
+* What is Terraform Cloud?
+  * SaaS offering for...
+    * Remote state storage.
+    * Version Control Integrations.
+    * Flexible Workflows.
+    * Collaboration.
+* `terraform state list`- List all resources in the state file.
+* `terraform state show <ADDRESS>` - Show a specific resource.
+* There can only be one *terraform* block in a module.
+  * Typically put into providers.tf.
+* Null resources - Resources that have no specific association with a provider.
+* GoLang produces a file called *crash.log* in the event of a panic/crash.
 
 
